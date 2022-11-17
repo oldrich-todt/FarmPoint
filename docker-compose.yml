@@ -1,0 +1,13 @@
+version: '3.8'
+
+services:
+  farmpointwebui:
+    image: ${DOCKER_REGISTRY-}farmpointwebui
+    build:
+      context: .
+      dockerfile: src/WebUi/Dockerfile
+    ports:
+      - "8080:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:80
