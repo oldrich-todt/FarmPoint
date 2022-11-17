@@ -35,7 +35,6 @@
 
     <ItemGroup>
       <ProjectReference Include="..\..\src\WebUI\WebUI.csproj" />
-      <ProjectReference Include="..\Domain.UnitTests\Domain.UnitTests.csproj" />
     </ItemGroup>
 
 </Project>
