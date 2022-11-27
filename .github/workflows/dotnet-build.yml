@@ -24,10 +24,7 @@ jobs:
     - name: Build
       run: dotnet build --no-restore --configuration Release
     - name: Run mssql 2022
-      run: sudo docker run -e "ACCEPT_EULA=Y" -e "MSSQL_SA_PASSWORD=StrongSAPassword$1~!" \
-          -p 1433:1433 --name sql1 --hostname sql1 \
-          -d \
-          mcr.microsoft.com/mssql/server:2022-latest
+      run: sudo docker run -e "ACCEPT_EULA=Y" -e "MSSQL_SA_PASSWORD=StrongSAPassword$1~!" -p 1433:1433 --name sql1 --hostname sql1 -d mcr.microsoft.com/mssql/server:2022-latest
     - name: Test
       run: dotnet test --logger html --results-directory "TestResults-${{ env.dotnet-version }}" --no-restore --configuration Release
       env:
