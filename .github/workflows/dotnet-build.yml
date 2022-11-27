@@ -18,16 +18,16 @@ jobs:
     - name: Setup .NET
       uses: actions/setup-dotnet@v3
       with:
-        dotnet-version: ${{ dotnet-version }}
+        dotnet-version: ${{ env.dotnet-version }}
     - name: Restore dependencies
       run: dotnet restore
     - name: Build
       run: dotnet build --no-restore --configuration Release
     - name: Test
-      run: dotnet test --logger trx --results-directory "TestResults-${{ dotnet-version }}" --no-restore --configuration Release
+      run: dotnet test --logger trx --results-directory "TestResults-${{ env.dotnet-version }}" --no-restore --configuration Release
     - name: Upload test results
       uses: actions/upload-artifact@v3
       with:
-        name: dotnet-results-${{ dotnet-version }}
-        path: TestResults-${{ dotnet-version }}
+        name: dotnet-results-${{ env.dotnet-version }}
+        path: TestResults-${{ env.dotnet-version }}
       if: ${{ always() }}
