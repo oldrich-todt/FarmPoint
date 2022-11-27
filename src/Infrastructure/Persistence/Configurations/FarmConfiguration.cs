@@ -18,5 +18,7 @@ public class FarmConfiguration : IEntityTypeConfiguration<Farm>
 
         builder.HasIndex(f => f.Name)
             .IsUnique();
+
+        builder.HasIndex(f => f.OwnerId);
     }
 }

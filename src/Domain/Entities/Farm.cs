@@ -8,4 +8,5 @@ namespace FarmPoint.Domain.Entities;
 public class Farm: BaseAuditableEntity
 {
     public required string Name { get; set; }
+    public required string OwnerId { get; set; }
 }
