@@ -57,6 +57,11 @@ public partial class Testing
         return await RunAsUserAsync("administrator@local", "Administrator1234!", new[] { "Administrator" });
     }
 
+    public static async Task<string> RunAsDefaultContributorUser()
+    {
+        return await RunAsUserAsync("contributor@local", "Contributor1234~!", new[] { "contributor" });
+    }
+
     public static async Task<string> RunAsUserAsync(string userName, string password, string[] roles)
     {
         using var scope = _scopeFactory.CreateScope();
