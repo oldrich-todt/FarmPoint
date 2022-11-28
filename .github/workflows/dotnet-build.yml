@@ -19,10 +19,6 @@ jobs:
       uses: actions/setup-dotnet@v3
       with:
         dotnet-version: ${{ env.dotnet-version }}
-    - name: Generate dev cert
-      run: openssl req -config localhost.conf -new -x509 -sha256 -newkey rsa:2048 -nodes -keyout localhost.key -days 3650 -out localhost.crt && openssl pkcs12 -export -out localhost.pfx -inkey localhost.key -in localhost.crt -passout pass:StrongPassword~1
-    - name: Trust dev cert
-      run: sudo cp localhost.crt /etc/ssl/certs && sudo cp localhost.key /etc/ssl/private
     - name: Restore dependencies
       run: dotnet restore
     - name: Build
@@ -33,8 +29,6 @@ jobs:
       run: dotnet test --logger html --results-directory "TestResults-${{ env.dotnet-version }}" --no-restore --configuration Release
       env:
         ConnectionStrings__DefaultConnection: Server=localhost;Database=FarmPointDb-Test;User Id=SA;Password=StrongSAPassword1~!;Encrypt=True;TrustServerCertificate=True;
-        ASPNETCORE_Kestrel__Certificates__Default__Path: /etc/ssl/certs/localhost.cer;
-        ASPNETCORE_Kestrel__Certificates__Default__KeyPath: /etc/ssl/private/localhost.key;
     - name: Upload test results
       uses: actions/upload-artifact@v3
       with:
