@@ -32,7 +32,7 @@ jobs:
     - name: Test
       run: dotnet test --logger html --results-directory "TestResults-${{ env.dotnet-version }}" --no-restore --configuration Release
       env:
-        ConnectionStrings__DefaultConnection: Server=localhost;Database=FarmPointDb-Test;User Id=SA;Password=StrongSAPassword1~!;
+        ConnectionStrings__DefaultConnection: Server=localhost;Database=FarmPointDb-Test;User Id=SA;Password=StrongSAPassword1~!;Encrypt=True;TrustServerCertificate=True;
         ASPNETCORE_Kestrel__Certificates__Default__Path: /etc/ssl/certs/localhost.cer;
         ASPNETCORE_Kestrel__Certificates__Default__KeyPath: /etc/ssl/private/localhost.key;
     - name: Upload test results
