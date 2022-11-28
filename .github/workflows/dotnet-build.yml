@@ -22,7 +22,7 @@ jobs:
     - name: Generate dev cert
       run: openssl req -config localhost.conf -new -x509 -sha256 -newkey rsa:2048 -nodes -keyout localhost.key -days 3650 -out localhost.crt && openssl pkcs12 -export -out localhost.pfx -inkey localhost.key -in localhost.crt -passout pass:StrongPassword~1
     - name: Trust dev cert
-      run: sudo apt install libnss3-tools && pk12util -d sql:$HOME/.pki/nssdb -i localhost.pfx && certutil -d sql:$HOME/.pki/nssdb -A -t "P,," -n 'dev cert' -i localhost.crt
+      run: sudo cp localhost.crt /etc/ssl/certs && sudo cp localhost.key /etc/ssl/private
     - name: Restore dependencies
       run: dotnet restore
     - name: Build
