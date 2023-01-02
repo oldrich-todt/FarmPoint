@@ -8,6 +8,9 @@ using AutoMapper.QueryableExtensions;
 using FarmPoint.Application.Common.Interfaces;
 using FarmPoint.Application.Common.Mappings;
 using FarmPoint.Application.Common.Models;
+using FarmPoint.Domain.Common;
+using FarmPoint.Domain.Entities;
+using FarmPoint.Domain.Specifications;
 using MediatR;
 
 namespace FarmPoint.Application.Farms.Queries.GetFarmsWithPagination;
@@ -19,20 +22,25 @@ public record GetFarmsWithPaginationQuery: IRequest<PaginatedList<FarmDto>>
 
 public class GetFarmsWithPaginationQueryHandler : IRequestHandler<GetFarmsWithPaginationQuery, PaginatedList<FarmDto>>
 {
-    private readonly IApplicationDbContext _context;
+    private readonly IRepository<Farm> _farmRepository;
     private readonly IMapper _mapper;
 
-    public GetFarmsWithPaginationQueryHandler(IApplicationDbContext context, IMapper mapper)
+    public GetFarmsWithPaginationQueryHandler(IRepository<Farm> farmRepository, IMapper mapper)
     {
-        _context = context ?? throw new ArgumentNullException(nameof(context));
+        _farmRepository = farmRepository ?? throw new ArgumentNullException(nameof(farmRepository));
         _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
     }
 
     public async Task<PaginatedList<FarmDto>> Handle(GetFarmsWithPaginationQuery request, CancellationToken cancellationToken)
     {
-        return await _context.Farms
-            .OrderBy(f => f.Name)
-            .ProjectTo<FarmDto>(_mapper.ConfigurationProvider)
-            .PaginatedListAsync(request.PageNumber, request.PageSize, cancellationToken);
+        var count = await _farmRepository.CountAsync(cancellationToken).ConfigureAwait(false);
+
+        var pagedSpec = new FarmPaginatedSpecification(request.PageNumber * request.PageSize, request.PageSize);
+
+        var farms = await _farmRepository.ListAsync(pagedSpec, cancellationToken).ConfigureAwait(false);
+
+        var farmDtos = _mapper.Map<List<FarmDto>>(farms);
+
+        return PaginatedList<FarmDto>.Create(farmDtos, request.PageNumber, request.PageSize, count);
     }
 }

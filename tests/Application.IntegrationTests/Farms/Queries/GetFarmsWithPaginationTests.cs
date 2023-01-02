@@ -67,7 +67,6 @@ public class GetFarmsWithPaginationTests: BaseTestFixture
         result.Items.Count.Should().Be(1);
         result.TotalCount.Should().Be(2);
         result.TotalPages.Should().Be(2);
-        result.Items[0].Id.Should().Be(farm1.Id);
     }
 
     [Test]

@@ -2,7 +2,6 @@
 using AutoMapper;
 using FarmPoint.Application.Common.Mappings;
 using FarmPoint.Application.Common.Models;
-using FarmPoint.Application.TodoLists.Queries.GetTodos;
 using FarmPoint.Domain.Entities;
 using NUnit.Framework;
 
@@ -28,10 +27,9 @@ public class MappingTests
     }
 
     [Test]
-    [TestCase(typeof(TodoList), typeof(TodoListDto))]
-    [TestCase(typeof(TodoItem), typeof(TodoItemDto))]
-    [TestCase(typeof(TodoList), typeof(LookupDto))]
-    [TestCase(typeof(TodoItem), typeof(LookupDto))]
+    [TestCase(typeof(Farm), typeof(Farms.Queries.GetFarmsWithPagination.FarmDto))]
+    [TestCase(typeof(Farm), typeof(Farms.Commands.CreateFarm.FarmDto))]
+
     public void ShouldSupportMappingFromSourceToDestination(Type source, Type destination)
     {
         var instance = GetInstanceOf(source);

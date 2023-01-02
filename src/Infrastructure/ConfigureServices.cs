@@ -1,5 +1,5 @@
 ﻿using FarmPoint.Application.Common.Interfaces;
-using FarmPoint.Infrastructure.Files;
+using FarmPoint.Domain.Common;
 using FarmPoint.Infrastructure.Identity;
 using FarmPoint.Infrastructure.Persistence;
 using FarmPoint.Infrastructure.Persistence.Interceptors;
@@ -43,13 +43,14 @@ public static class ConfigureServices
 
         services.AddTransient<IDateTime, DateTimeService>();
         services.AddTransient<IIdentityService, IdentityService>();
-        services.AddTransient<ICsvFileBuilder, CsvFileBuilder>();
 
         services.AddAuthentication()
             .AddIdentityServerJwt();
 
         services.AddAuthorization(options =>
             options.AddPolicy("CanPurge", policy => policy.RequireRole("Administrator")));
+
+        services.AddScoped(typeof(IRepository<>), typeof(EfRepository<>));
 
         return services;
     }

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using FarmPoint.Application.Common.Interfaces;
 using FarmPoint.Application.Common.Security;
+using FarmPoint.Domain.Common;
 using FarmPoint.Domain.Entities;
 using FarmPoint.Domain.Events;
 using MediatR;
@@ -20,13 +21,13 @@ public record CreateFarmCommand: IRequest<FarmDto>
 
 public class CreateFarmCommandHandler: IRequestHandler<CreateFarmCommand, FarmDto>
 {
-    private readonly IApplicationDbContext _context;
+    private readonly IRepository<Farm> _farmRepository;
     private readonly IMapper _mapper;
     private readonly ICurrentUserService _currentUser;
 
-    public CreateFarmCommandHandler(IApplicationDbContext context, IMapper mapper, ICurrentUserService currentUser)
+    public CreateFarmCommandHandler(IRepository<Farm> farmRepository, IMapper mapper, ICurrentUserService currentUser)
     {
-        _context = context ?? throw new ArgumentNullException(nameof(context));
+        _farmRepository = farmRepository ?? throw new ArgumentNullException(nameof(farmRepository));
         _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         _currentUser = currentUser ?? throw new ArgumentNullException(nameof(currentUser));
     }
@@ -41,10 +42,8 @@ public class CreateFarmCommandHandler: IRequestHandler<CreateFarmCommand, FarmDt
 
         entity.AddDomainEvent(new FarmCreatedEvent(entity));
 
-        var entityEntry = _context.Farms.Add(entity);
+        var farm = await _farmRepository.AddAsync(entity, cancellationToken);
 
-        await _context.SaveChangesAsync(cancellationToken);
-
-        return _mapper.Map<FarmDto>(entityEntry.Entity);
+        return _mapper.Map<FarmDto>(farm);
     }
 }

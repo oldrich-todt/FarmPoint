@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace FarmPoint.Domain.Entities;
-public class Farm: BaseAuditableEntity
+public class Farm: BaseAuditableEntity, IAggregateRoot
 {
     public required string Name { get; set; }
     public required string OwnerId { get; set; }
