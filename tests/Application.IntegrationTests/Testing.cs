@@ -33,6 +33,20 @@ public partial class Testing
         });
     }
 
+    public static TResponse? GetService<TResponse>()
+    {
+        using var scope = _scopeFactory.CreateScope();
+
+        return scope.ServiceProvider.GetService<TResponse>();
+    }
+
+    public static object? GetService(Type serviceType)
+    {
+        using var scope = _scopeFactory.CreateScope();
+
+        return scope.ServiceProvider.GetService(serviceType);
+    }
+
     public static async Task<TResponse> SendAsync<TResponse>(IRequest<TResponse> request)
     {
         using var scope = _scopeFactory.CreateScope();

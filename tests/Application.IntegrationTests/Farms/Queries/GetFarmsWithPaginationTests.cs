@@ -3,9 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using AutoMapper;
 using FarmPoint.Application.Common.Exceptions;
+using FarmPoint.Application.Common.Interfaces;
 using FarmPoint.Application.Farms.Commands.CreateFarm;
 using FarmPoint.Application.Farms.Queries.GetFarmsWithPagination;
+using FarmPoint.Domain.Common;
+using FarmPoint.Domain.Entities;
 using FluentAssertions;
 using NUnit.Framework;
 
@@ -15,6 +19,17 @@ using static Testing;
 
 public class GetFarmsWithPaginationTests: BaseTestFixture
 {
+    [Test]
+    [TestCase(typeof(IRepository<Farm>))]
+    [TestCase(typeof(IMapper))]
+    public void ShouldBeRegistered(Type type)
+    {
+        var service = GetService(type);
+
+        service.Should().NotBeNull();
+        service.Should().BeAssignableTo(type);
+    }
+
     [Test]
     public async Task ShouldReturnEmptyPaginatedResult()
     {
