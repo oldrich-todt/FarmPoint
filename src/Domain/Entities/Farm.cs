@@ -9,4 +9,9 @@ public class Farm: BaseAuditableEntity, IAggregateRoot
 {
     public required string Name { get; set; }
     public required string OwnerId { get; set; }
+
+    public static Farm Create(string name, string ownerId)
+    {
+        return new Farm { Name = name, OwnerId = ownerId };
+    }
 }
