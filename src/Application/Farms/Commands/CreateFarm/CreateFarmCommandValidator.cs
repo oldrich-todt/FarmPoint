@@ -4,17 +4,20 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using FarmPoint.Application.Common.Interfaces;
+using FarmPoint.Domain.Common;
+using FarmPoint.Domain.Entities;
+using FarmPoint.Domain.Specifications;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 
 namespace FarmPoint.Application.Farms.Commands.CreateFarm;
 public class CreateFarmCommandValidator: AbstractValidator<CreateFarmCommand>
 {
-    private readonly IApplicationDbContext _context;
+    private readonly IRepository<Farm> _farmRepository;
 
-    public CreateFarmCommandValidator(IApplicationDbContext context)
+    public CreateFarmCommandValidator(IRepository<Farm> farmRepository)
     {
-        _context = context ?? throw new ArgumentNullException(nameof(context));
+        _farmRepository = farmRepository ?? throw new ArgumentNullException(nameof(farmRepository));
 
         RuleFor(c => c.Name)
             .NotEmpty().WithMessage("Name must not be empty.")
@@ -22,8 +25,12 @@ public class CreateFarmCommandValidator: AbstractValidator<CreateFarmCommand>
             .MustAsync(BeUniqueName).WithMessage("The farm with this name already exists");
     }
 
-    private Task<bool> BeUniqueName(string name, CancellationToken cancellationToken)
+    private async Task<bool> BeUniqueName(string name, CancellationToken cancellationToken)
     {
-        return _context.Farms.AllAsync(f => f.Name != name, cancellationToken);
+        var farmByNameSpec = new FarmWithNameSpecification(name);
+
+        var anyFarmWithName = await _farmRepository.AnyAsync(farmByNameSpec, cancellationToken);
+
+        return !anyFarmWithName;
     }
 }

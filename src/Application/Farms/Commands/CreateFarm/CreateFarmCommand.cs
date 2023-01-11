@@ -34,12 +34,7 @@ public class CreateFarmCommandHandler: IRequestHandler<CreateFarmCommand, FarmDt
 
     public async Task<FarmDto> Handle(CreateFarmCommand command, CancellationToken cancellationToken)
     {
-        var entity = new Farm
-        {
-            Name = command.Name,
-            OwnerId = _currentUser.UserId
-        };
-
+        var entity = Farm.Create(command.Name, _currentUser.UserId);
         entity.AddDomainEvent(new FarmCreatedEvent(entity));
 
         var farm = await _farmRepository.AddAsync(entity, cancellationToken);

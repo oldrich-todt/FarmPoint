@@ -3,9 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using AutoMapper;
 using FarmPoint.Application.Common.Exceptions;
+using FarmPoint.Application.Common.Interfaces;
 using FarmPoint.Application.Farms.Commands.CreateFarm;
+using FarmPoint.Domain.Common;
+using FarmPoint.Domain.Entities;
 using FluentAssertions;
+using MediatR;
 using NUnit.Framework;
 
 namespace FarmPoint.Application.IntegrationTests.Farms.Commands;
@@ -14,6 +19,18 @@ using static Testing;
 
 internal class CreateFarmTests: BaseTestFixture
 {
+    [Test]
+    [TestCase(typeof(IRepository<Farm>))]
+    [TestCase(typeof(IMapper))]
+    [TestCase(typeof(ICurrentUserService))]
+    public void ShouldBeRegistered(Type type)
+    {
+        var service = GetService(type);
+
+        service.Should().NotBeNull();
+        service.Should().BeAssignableTo(type);
+    }
+
     [Test]
     public async Task ShouldCreateFarm()
     {
