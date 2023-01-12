@@ -17,7 +17,7 @@ public static partial class LogMessages
     /* WARNINGS >= 15000 */
 
     /* ERRORS >= 20000 */
-    [LoggerMessage(20001, LogLevel.Information, "Error creating farm")]
+    [LoggerMessage(20001, LogLevel.Error, "Error creating farm")]
     public static partial void FarmCreatingError(this ILogger logger, Exception exception);
 
     /* CRITICAL >= 30000 */
