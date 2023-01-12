@@ -5,11 +5,13 @@ using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
 using FarmPoint.Application.Common.Interfaces;
+using FarmPoint.Application.Common.Logging;
 using FarmPoint.Application.Common.Security;
 using FarmPoint.Domain.Common;
 using FarmPoint.Domain.Entities;
 using FarmPoint.Domain.Events;
 using MediatR;
+using Microsoft.Extensions.Logging;
 
 namespace FarmPoint.Application.Farms.Commands.CreateFarm;
 
@@ -24,12 +26,14 @@ public class CreateFarmCommandHandler: IRequestHandler<CreateFarmCommand, FarmDt
     private readonly IRepository<Farm> _farmRepository;
     private readonly IMapper _mapper;
     private readonly ICurrentUserService _currentUser;
+    private readonly ILogger<CreateFarmCommandHandler> _logger;
 
-    public CreateFarmCommandHandler(IRepository<Farm> farmRepository, IMapper mapper, ICurrentUserService currentUser)
+    public CreateFarmCommandHandler(IRepository<Farm> farmRepository, IMapper mapper, ICurrentUserService currentUser, ILogger<CreateFarmCommandHandler> logger)
     {
         _farmRepository = farmRepository ?? throw new ArgumentNullException(nameof(farmRepository));
         _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         _currentUser = currentUser ?? throw new ArgumentNullException(nameof(currentUser));
+        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
     public async Task<FarmDto> Handle(CreateFarmCommand command, CancellationToken cancellationToken)
@@ -37,8 +41,15 @@ public class CreateFarmCommandHandler: IRequestHandler<CreateFarmCommand, FarmDt
         var entity = Farm.Create(command.Name, _currentUser.UserId);
         entity.AddDomainEvent(new FarmCreatedEvent(entity));
 
-        var farm = await _farmRepository.AddAsync(entity, cancellationToken);
-
-        return _mapper.Map<FarmDto>(farm);
+        try
+        {
+            var farm = await _farmRepository.AddAsync(entity, cancellationToken);
+            return _mapper.Map<FarmDto>(farm);
+        }
+        catch (Exception ex)
+        {
+            _logger.FarmCreatingError(ex);
+            throw;
+        }
     }
 }
