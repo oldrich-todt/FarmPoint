@@ -1,4 +1,5 @@
-﻿using FarmPoint.Application.Common.Interfaces;
+﻿using FarmPoint.Application.Common;
+using FarmPoint.Application.Common.Interfaces;
 using FarmPoint.Domain.Common;
 using FarmPoint.Infrastructure.Identity;
 using FarmPoint.Infrastructure.Persistence;
@@ -17,7 +18,7 @@ public static class ConfigureServices
     {
         services.AddScoped<AuditableEntitySaveChangesInterceptor>();
 
-        if (configuration.GetValue<bool>("UseInMemoryDatabase"))
+        if (configuration.GetValue<bool>(GlobalSettings.UseInMemoryDatabaseKey))
         {
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseInMemoryDatabase("FarmPointDb"));
@@ -25,7 +26,7 @@ public static class ConfigureServices
         else
         {
             services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"),
+                options.UseSqlServer(configuration[GlobalSettings.ConnectionStringKey],
                     builder => builder.MigrationsAssembly(typeof(ApplicationDbContext).Assembly.FullName)));
         }
 
