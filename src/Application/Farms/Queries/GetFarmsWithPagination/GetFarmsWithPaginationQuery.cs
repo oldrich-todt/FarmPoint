@@ -17,7 +17,7 @@ using MediatR;
 
 namespace FarmPoint.Application.Farms.Queries.GetFarmsWithPagination;
 
-[Authorize(Roles = "contributor")]
+[Authorize]
 public record GetFarmsWithPaginationQuery: IRequest<PaginatedList<FarmDto>>
 {
     public int PageNumber { get; set; }

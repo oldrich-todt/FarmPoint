@@ -100,7 +100,7 @@ public partial class Testing
 
         if (result.Succeeded)
         {
-            _currentUserId = user.Id;
+            _currentUserId = user.UserName;
 
             return _currentUserId;
         }
