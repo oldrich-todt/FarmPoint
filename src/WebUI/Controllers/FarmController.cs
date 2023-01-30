@@ -8,9 +8,11 @@ namespace WebUI.Controllers;
 
 public class FarmController: ApiControllerBase
 {
+    [HttpGet]
     public async Task<PaginatedList<GetFarmsWithPagination.FarmDto>> GetFarmsWithPagination([FromQuery] GetFarmsWithPagination.GetFarmsWithPaginationQuery query)
         => await Mediator.Send(query);
 
+    [HttpPost]
     public async Task<CreateFarm.FarmDto> CreateFarm([FromBody] CreateFarm.CreateFarmCommand command)
         => await Mediator.Send(command);
 }

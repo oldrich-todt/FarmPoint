@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,12 +9,15 @@ using AutoMapper.QueryableExtensions;
 using FarmPoint.Application.Common.Interfaces;
 using FarmPoint.Application.Common.Mappings;
 using FarmPoint.Application.Common.Models;
+using FarmPoint.Application.Common.Security;
 using FarmPoint.Domain.Common;
 using FarmPoint.Domain.Entities;
 using FarmPoint.Domain.Specifications;
 using MediatR;
 
 namespace FarmPoint.Application.Farms.Queries.GetFarmsWithPagination;
+
+[Authorize(Roles = "contributor")]
 public record GetFarmsWithPaginationQuery: IRequest<PaginatedList<FarmDto>>
 {
     public int PageNumber { get; set; }
@@ -35,7 +39,7 @@ public class GetFarmsWithPaginationQueryHandler : IRequestHandler<GetFarmsWithPa
     {
         var count = await _farmRepository.CountAsync(cancellationToken).ConfigureAwait(false);
 
-        var pagedSpec = new FarmPaginatedSpecification(request.PageNumber * request.PageSize, request.PageSize);
+        var pagedSpec = new FarmPaginatedSpecification((request.PageNumber-1) * request.PageSize, request.PageSize);
 
         var farms = await _farmRepository.ListAsync(pagedSpec, cancellationToken).ConfigureAwait(false);
 

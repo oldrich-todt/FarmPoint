@@ -9,3 +9,11 @@ To create migrations using `dotnet ef migrations` run this command in project's 
 ```powershell
 dotnet ef migrations add AddFarmEntity --project .\src\Infrastructure\ --startup-project .\src\WebUI\ --output-dir .\Persistence\Migrations\
 ```
+
+## Development JWT token
+When developing locally use `dotnet user-jwts` command to generate development JWT token.
+
+```powershell
+cd .\src\WebUI\
+dotnet user-jwts -p .\WebUI.csproj create --scheme IdentityServerJwtBearer --name administrator@localhost
+```
